@@ -27,11 +27,17 @@ export default function Contact({ data }) {
     .map((k) => ({ key: k, url: data[k], ...SOCIAL_META[k] }));
 
   return (
-    <section id="contact" className="relative py-24 px-6 lg:px-10" data-testid="section-contact">
-      <div className="max-w-6xl mx-auto">
+    <section id="contact" className="relative py-24 px-6 lg:px-10 overflow-hidden" data-testid="section-contact">
+      <span aria-hidden className="absolute top-12 right-4 lg:right-12 font-heading font-black text-[140px] sm:text-[200px] lg:text-[260px] leading-none tracking-tighter select-none pointer-events-none z-0 watermark-num">07</span>
+      <div className="max-w-7xl mx-auto relative">
         <div className="mb-10">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">{t.sections.contact.eyebrow}</p>
-          <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tighter mt-2">{t.sections.contact.title}</h2>
+          <div className="flex items-baseline gap-3 flex-wrap mt-2">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tighter">{t.sections.contact.title}</h2>
+            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary inline-flex items-center gap-1">
+              <span className="w-4 h-px bg-primary"></span> send →
+            </span>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-12 gap-4">

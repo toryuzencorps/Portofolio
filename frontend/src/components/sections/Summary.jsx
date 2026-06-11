@@ -15,8 +15,9 @@ export default function Summary({ data }) {
   };
 
   return (
-    <section id="summary" className="relative min-h-screen pt-32 pb-20 px-6 lg:px-10" data-testid="section-summary">
-      <div className="max-w-7xl mx-auto">
+    <section id="summary" className="relative min-h-screen pt-32 pb-20 px-6 lg:px-10 overflow-hidden" data-testid="section-summary">
+      <span aria-hidden className="absolute top-32 right-4 lg:right-12 font-heading font-black text-[140px] sm:text-[200px] lg:text-[260px] leading-none tracking-tighter select-none pointer-events-none z-0 watermark-num">01</span>
+      <div className="max-w-7xl mx-auto relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

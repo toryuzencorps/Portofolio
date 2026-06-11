@@ -87,12 +87,16 @@ export default function Forum() {
   };
 
   return (
-    <section id="forum" className="relative py-24 px-6 lg:px-10" data-testid="section-forum">
-      <div className="max-w-5xl mx-auto">
+    <section id="forum" className="relative py-24 px-6 lg:px-10 overflow-hidden" data-testid="section-forum">
+      <span aria-hidden className="absolute top-12 right-4 lg:right-12 font-heading font-black text-[140px] sm:text-[200px] lg:text-[260px] leading-none tracking-tighter select-none pointer-events-none z-0 watermark-num">06</span>
+      <div className="max-w-7xl mx-auto relative">
         <div className="mb-8 flex items-end justify-between gap-4 flex-wrap">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">{t.sections.forum.eyebrow}</p>
-            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tighter mt-2">{t.sections.forum.title}</h2>
+            <div className="flex items-baseline gap-3 flex-wrap mt-2">
+              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tighter">{t.sections.forum.title}</h2>
+              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary"><span className="text-primary">$</span> chat --live</span>
+            </div>
           </div>
           <span
             className={`font-mono text-[10px] uppercase tracking-widest px-3 py-1.5 border ${connected ? "border-primary/60 text-primary" : "border-border text-muted-foreground"}`}

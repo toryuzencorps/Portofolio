@@ -9,11 +9,15 @@ export default function Experience({ data }) {
   const [openIdx, setOpenIdx] = useState(null);
 
   return (
-    <section id="experience" className="relative py-24 px-6 lg:px-10" data-testid="section-experience">
-      <div className="max-w-7xl mx-auto">
+    <section id="experience" className="relative py-24 px-6 lg:px-10 overflow-hidden" data-testid="section-experience">
+      <span aria-hidden className="absolute top-12 right-4 lg:right-12 font-heading font-black text-[140px] sm:text-[200px] lg:text-[260px] leading-none tracking-tighter select-none pointer-events-none z-0 watermark-num">03</span>
+      <div className="max-w-7xl mx-auto relative">
         <div className="mb-12">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">{t.sections.experience.eyebrow}</p>
-          <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tighter mt-2">{t.sections.experience.title}</h2>
+          <div className="flex items-baseline gap-3 flex-wrap mt-2">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tighter">{t.sections.experience.title}</h2>
+            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary border-l-2 border-primary px-2.5">timeline</span>
+          </div>
           <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mt-3">
             // CLICK ANY ITEM TO EXPAND
           </p>
