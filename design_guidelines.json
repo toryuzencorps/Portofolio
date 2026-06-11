@@ -1,0 +1,109 @@
+{
+  "theme": "Dark/Light Toggle (Default Dark)",
+  "archetype": "7 (Electric & Neon) - Refined Tech Developer",
+  "emotional_tone": "Futuristic, Highly Technical, Innovative, and Command-Center Elite",
+  "typography": {
+    "fonts": {
+      "headings": "Cabinet Grotesk",
+      "body": "IBM Plex Sans",
+      "mono": "JetBrains Mono"
+    },
+    "rules": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tighter font-black",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl tracking-tight font-bold",
+      "h3": "text-xl sm:text-2xl font-semibold",
+      "body": "text-base leading-relaxed",
+      "labels": "uppercase text-xs tracking-[0.2em] font-mono",
+      "notes": "No Inter for headings. Keep hierarchy gaps tight. Use JetBrains Mono for tech-specific data, chat timestamps, and skill tags."
+    }
+  },
+  "colors": {
+    "dark": {
+      "background": "#050505",
+      "surface": "#0A0A0A",
+      "surface_elevated": "#121212",
+      "primary": "#00F0FF",
+      "primary_hover": "#4DF8FF",
+      "text_main": "#FFFFFF",
+      "text_muted": "#8A8F98",
+      "border": "rgba(255, 255, 255, 0.1)",
+      "error": "#FF3366",
+      "success": "#00FF9D"
+    },
+    "light": {
+      "background": "#FAFAFA",
+      "surface": "#FFFFFF",
+      "surface_elevated": "#F4F4F5",
+      "primary": "#0066FF",
+      "primary_hover": "#0052CC",
+      "text_main": "#09090B",
+      "text_muted": "#71717A",
+      "border": "rgba(0, 0, 0, 0.1)",
+      "error": "#E11D48",
+      "success": "#16A34A"
+    }
+  },
+  "layout_and_spacing": {
+    "global_spacing": "Generous spacing strategy (p-8 to p-16) for Portfolio. Dense spacing (p-4 to p-6) for Admin CMS.",
+    "grid_modes": {
+      "portfolio_gallery": "Mode A (Tetris Grid): grid-cols-1 md:grid-cols-8 lg:grid-cols-12 with wide gap-8. Mix col-span-4 and col-span-8 for asymmetry.",
+      "admin_dashboard": "Mode B (Control Room Grid): grid-cols-1 md:grid-cols-3 lg:grid-cols-4 with tight gap-4. Every pixel utilized, h-full on children."
+    },
+    "surface_strategies": {
+      "header": "Crystal Glassmorphism: backdrop-blur-xl bg-black/60 (dark) or bg-white/70 (light) with 1px delicate inner stroke (border-white/10).",
+      "skill_cards": "The Tracing Beam: Use a subtle glowing gradient border effect for tech skills.",
+      "chat_forum": "Retro-Futurism: Deep black/indigo terminal look. Neon cyan borders (border-primary/50), JetBrains Mono typography, subtle text drop-shadow for 'hacker' vibe.",
+      "admin_cards": "Neumorphic/Flat hybrid: Flat background, 1px subtle border, sharp corners (rounded-none or max rounded-md)."
+    }
+  },
+  "components": {
+    "interactive_background": {
+      "library": "react-tsparticles",
+      "concept": "Matrix/Network hybrid. Subtle, slow-moving connected network nodes or falling 'code rain' particles. Must not distract from text.",
+      "z_index": "-1, must be fixed to background."
+    },
+    "navigation": {
+      "style": "Sticky top, z-50. Must include Logo (JetBrains Mono text), Links, Language Toggle (EN/ID), Dark Mode Toggle, and 'Admin Login' subtle link."
+    },
+    "forms_and_chat": {
+      "inputs": "Shadcn UI heavily customized. Dark mode: bg-transparent, border-white/20, focus:border-primary focus:ring-1 focus:ring-primary. No generic Vercel looks.",
+      "chat_messages": "Anonymous forum should look like a CLI/Terminal feed. Example: '[anon_142] $ Great portfolio!'"
+    },
+    "animations": {
+      "hover": "Hover states must explicitly set text color (e.g., hover:text-black hover:bg-primary).",
+      "transitions": "transition-all duration-300 ease-out.",
+      "reveal": "Use framer-motion for staggered entrance animations on the timeline and portfolio grid."
+    }
+  },
+  "media": {
+    "image_urls": {
+      "hero_fallback": {
+        "url": "https://images.pexels.com/photos/30820142/pexels-photo-30820142.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Futuristic tunnel with neon lights. Use as a fallback or subtle blended background if particles fail to load.",
+        "category": "background"
+      },
+      "portfolio_placeholder_1": {
+        "url": "https://images.pexels.com/photos/10325707/pexels-photo-10325707.png?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Abstract data network.",
+        "category": "project_thumbnail"
+      },
+      "portfolio_placeholder_2": {
+        "url": "https://images.unsplash.com/photo-1759661881353-5b9cc55e1cf4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwxfHxjeWJlcnB1bmslMjBkZXZlbG9wZXIlMjB3b3Jrc3BhY2V8ZW58MHx8fHwxNzgxMTg1MjAyfDA&ixlib=rb-4.1.0&q=85",
+        "description": "Cyberpunk developer code screen.",
+        "category": "project_thumbnail"
+      },
+      "portfolio_placeholder_3": {
+        "url": "https://images.pexels.com/photos/34212896/pexels-photo-34212896.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Vibrant coding workspace.",
+        "category": "project_thumbnail"
+      }
+    },
+    "rules": "Never use via.placeholder.com. Ensure images have a bg-black/50 overlay when text is placed on them."
+  },
+  "tech_stack_instructions": {
+    "icons": "Install and use `lucide-react` (default) or `@phosphor-icons/react` for technical/duotone icons.",
+    "testing": "All interactive elements MUST have `data-testid` (e.g., `data-testid=\"lang-toggle-button\"`, `data-testid=\"chat-submit-button\"`).",
+    "cms_crud": "Admin dashboard must use Shadcn Tables and Dialogs for editing CV sections. Include custom JWT auth logic.",
+    "i18n": "Implement a bilingual dictionary/context for EN/ID toggle. Default is EN."
+  }
+}
