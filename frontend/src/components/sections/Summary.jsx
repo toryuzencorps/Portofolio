@@ -18,7 +18,7 @@ export default function Summary({ data }) {
   return (
     <section id="summary" className="relative min-h-screen pt-32 pb-20 px-6 lg:px-10 overflow-hidden" data-testid="section-summary">
       <SectionShape variant="orb" />
-      <div className="max-w-7xl mx-auto relative">
+      <div className="max-w-6xl mx-auto relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

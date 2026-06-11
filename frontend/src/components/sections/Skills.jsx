@@ -20,7 +20,7 @@ export default function Skills({ data }) {
   return (
     <section id="skills" className="relative py-24 px-6 lg:px-10 overflow-hidden" data-testid="section-skills">
       <SectionShape variant="rhombus" />
-      <div className="max-w-7xl mx-auto relative">
+      <div className="max-w-6xl mx-auto relative">
         <div className="mb-10">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">{t.sections.skills.eyebrow}</p>
           <div className="flex items-baseline gap-3 flex-wrap mt-2">

@@ -90,7 +90,7 @@ export default function Forum() {
   return (
     <section id="forum" className="relative py-24 px-6 lg:px-10 overflow-hidden" data-testid="section-forum">
       <SectionShape variant="hexagon" />
-      <div className="max-w-7xl mx-auto relative">
+      <div className="max-w-6xl mx-auto relative">
         <div className="mb-8 flex items-end justify-between gap-4 flex-wrap">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">{t.sections.forum.eyebrow}</p>

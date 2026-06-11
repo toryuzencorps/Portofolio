@@ -12,7 +12,7 @@ export default function Experience({ data }) {
   return (
     <section id="experience" className="relative py-24 px-6 lg:px-10 overflow-hidden" data-testid="section-experience">
       <SectionShape variant="pillbar" />
-      <div className="max-w-7xl mx-auto relative">
+      <div className="max-w-6xl mx-auto relative">
         <div className="mb-12">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">{t.sections.experience.eyebrow}</p>
           <div className="flex items-baseline gap-3 flex-wrap mt-2">
