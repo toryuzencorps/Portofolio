@@ -3,6 +3,7 @@ import { useLang } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { api, wsUrl } from "@/lib/api";
 import { Send, Trash2 } from "lucide-react";
+import SectionShape from "@/components/SectionShape";
 
 function fmtTime(iso) {
   try {
@@ -88,7 +89,7 @@ export default function Forum() {
 
   return (
     <section id="forum" className="relative py-24 px-6 lg:px-10 overflow-hidden" data-testid="section-forum">
-      <span aria-hidden className="absolute top-12 right-4 lg:right-12 font-heading font-black text-[140px] sm:text-[200px] lg:text-[260px] leading-none tracking-tighter select-none pointer-events-none z-0 watermark-num">06</span>
+      <SectionShape variant="hexagon" />
       <div className="max-w-7xl mx-auto relative">
         <div className="mb-8 flex items-end justify-between gap-4 flex-wrap">
           <div>

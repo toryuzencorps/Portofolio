@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useLang } from "@/contexts/LanguageContext";
 import { Mail, Github, Linkedin, Twitter, Copy, Check, ArrowUpRight, MessageSquare, Send } from "lucide-react";
+import SectionShape from "@/components/SectionShape";
 
 const SOCIAL_META = {
   github:   { icon: Github,   label: "GitHub",   handle: "@github",   color: "#FFFFFF" },
@@ -28,7 +29,7 @@ export default function Contact({ data }) {
 
   return (
     <section id="contact" className="relative py-24 px-6 lg:px-10 overflow-hidden" data-testid="section-contact">
-      <span aria-hidden className="absolute top-12 right-4 lg:right-12 font-heading font-black text-[140px] sm:text-[200px] lg:text-[260px] leading-none tracking-tighter select-none pointer-events-none z-0 watermark-num">07</span>
+      <SectionShape variant="signal" />
       <div className="max-w-7xl mx-auto relative">
         <div className="mb-10">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">{t.sections.contact.eyebrow}</p>

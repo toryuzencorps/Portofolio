@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useLang } from "@/contexts/LanguageContext";
 import { GraduationCap } from "lucide-react";
+import SectionShape from "@/components/SectionShape";
 
 export default function Education({ data }) {
   const { lang, t } = useLang();
@@ -9,7 +10,7 @@ export default function Education({ data }) {
 
   return (
     <section id="education" className="relative py-24 px-6 lg:px-10 overflow-hidden" data-testid="section-education">
-      <span aria-hidden className="absolute top-12 right-4 lg:right-12 font-heading font-black text-[140px] sm:text-[200px] lg:text-[260px] leading-none tracking-tighter select-none pointer-events-none z-0 watermark-num">05</span>
+      <SectionShape variant="rings" />
       <div className="max-w-7xl mx-auto relative">
         <div className="mb-12">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">{t.sections.education.eyebrow}</p>

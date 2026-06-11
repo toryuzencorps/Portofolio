@@ -133,6 +133,21 @@ html.light ::-moz-selection {
   -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
 }
 
+/* Bold tech grid for the global background — more visible */
+.tech-grid-bold {
+  background-image:
+    linear-gradient(hsl(var(--primary) / 0.10) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--primary) / 0.10) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 30%, black 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 30%, black 30%, transparent 100%);
+  animation: grid-drift 60s linear infinite;
+}
+@keyframes grid-drift {
+  from { background-position: 0 0, 0 0; }
+  to   { background-position: 64px 0, 0 64px; }
+}
+
 /* Glow */
 .text-glow { text-shadow: 0 0 24px hsl(var(--primary) / 0.45); }
 .border-glow { box-shadow: 0 0 0 1px hsl(var(--primary) / 0.4), 0 0 32px -8px hsl(var(--primary) / 0.6); }
@@ -223,15 +238,6 @@ html.light ::-moz-selection {
   border-color: hsl(var(--primary) / 0.5);
   color: hsl(var(--primary));
   box-shadow: 0 0 18px -6px hsl(var(--primary) / 0.45);
-}
-
-/* Section watermark — giant decorative number behind content */
-.watermark-num {
-  color: hsl(var(--primary));
-  opacity: 0.05;
-}
-.light .watermark-num {
-  opacity: 0.07;
 }
 
 /* Liquid panel — same glass aesthetic but with rounded corners (for dropdowns/mobile menu) */
