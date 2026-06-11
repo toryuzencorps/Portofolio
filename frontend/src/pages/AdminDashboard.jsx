@@ -9,8 +9,9 @@ import Navbar from "@/components/Navbar";
 import {
   LogOut, Save, ExternalLink, AlertCircle, Check, Sparkles,
   User, Wrench, Briefcase, FolderKanban, GraduationCap, Mail,
-  FileJson, Wand2, RotateCcw, ChevronRight,
+  FileJson, Wand2, RotateCcw, ChevronRight, Folder,
 } from "lucide-react";
+import FileManager from "@/components/admin/FileManager";
 
 const SECTIONS = [
   { id: "summary",    icon: User,          tint: "#00F0FF" },
@@ -26,6 +27,7 @@ export default function AdminDashboard() {
   const { t } = useLang();
   const { content, loading: cLoading, refresh } = useContent();
   const [active, setActive] = useState("summary");
+  const [view, setView] = useState("content"); // 'content' | 'files'
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [drafts, setDrafts] = useState({});
@@ -101,7 +103,7 @@ export default function AdminDashboard() {
       <main className="pt-24 pb-12 px-6 lg:px-10 min-h-screen" data-testid="admin-dashboard">
         <div className="max-w-7xl mx-auto">
           {/* Top header */}
-          <div className="flex items-end justify-between flex-wrap gap-4 mb-8">
+          <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/5 mb-3">
                 <span className="relative flex h-2 w-2">
@@ -131,6 +133,28 @@ export default function AdminDashboard() {
             </div>
           </div>
 
+          {/* Top tabs: Content / Files */}
+          <div className="flex items-center gap-2 mb-6 border-b border-border" data-testid="admin-top-tabs">
+            <button
+              onClick={() => setView("content")}
+              data-testid="admin-tab-content"
+              className={`px-4 py-2.5 font-mono text-xs uppercase tracking-widest flex items-center gap-2 border-b-2 transition-colors ${view === "content" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+            >
+              <FileJson className="w-3.5 h-3.5" /> Content
+            </button>
+            <button
+              onClick={() => setView("files")}
+              data-testid="admin-tab-files"
+              className={`px-4 py-2.5 font-mono text-xs uppercase tracking-widest flex items-center gap-2 border-b-2 transition-colors ${view === "files" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+            >
+              <Folder className="w-3.5 h-3.5" /> Files
+            </button>
+          </div>
+
+          {view === "files" ? (
+            <FileManager />
+          ) : (
+          <>
           <div className="grid lg:grid-cols-12 gap-4">
             {/* SIDEBAR */}
             <aside className="lg:col-span-3 space-y-2">
@@ -279,13 +303,15 @@ export default function AdminDashboard() {
                 <strong className="text-foreground/90">Bilingual content.</strong> Add `i18n: {`{en, id}`}` for any field that needs translation.
               </div>
               <div>
-                <strong className="text-foreground/90">Format anytime.</strong> Click <em>Format</em> to auto-indent JSON before saving.
+                <strong className="text-foreground/90">Upload images.</strong> Go to the <em>Files</em> tab to upload and get a URL.
               </div>
               <div>
                 <strong className="text-foreground/90">Unsaved indicator.</strong> The yellow dot shows which sections still have pending changes.
               </div>
             </div>
           </div>
+          </>
+          )}
         </div>
       </main>
     </>

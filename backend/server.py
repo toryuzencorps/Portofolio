@@ -10,12 +10,13 @@ import uuid
 import bcrypt
 import jwt
 from datetime import datetime, timezone, timedelta
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
-from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends, WebSocket, WebSocketDisconnect, UploadFile, File, Header, Query
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field, EmailStr
+import requests
 
 
 # ---------- DB ----------
@@ -459,6 +460,132 @@ async def ws_forum(ws: WebSocket):
         manager.disconnect(ws)
 
 
+# ---------- OBJECT STORAGE (Emergent) ----------
+STORAGE_URL = "https://integrations.emergentagent.com/objstore/api/v1/storage"
+APP_NAME = os.environ.get("APP_NAME", "portfolio-cv")
+EMERGENT_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
+_storage_key: Optional[str] = None
+
+ALLOWED_MIME = {
+    "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp",
+    "image/gif": "gif", "image/svg+xml": "svg",
+}
+MAX_UPLOAD_SIZE = 5 * 1024 * 1024  # 5MB
+
+
+def init_storage() -> str:
+    global _storage_key
+    if _storage_key:
+        return _storage_key
+    if not EMERGENT_KEY:
+        raise HTTPException(status_code=500, detail="Storage not configured")
+    r = requests.post(f"{STORAGE_URL}/init", json={"emergent_key": EMERGENT_KEY}, timeout=30)
+    r.raise_for_status()
+    _storage_key = r.json()["storage_key"]
+    return _storage_key
+
+
+def storage_put(path: str, data: bytes, content_type: str) -> dict:
+    key = init_storage()
+    r = requests.put(
+        f"{STORAGE_URL}/objects/{path}",
+        headers={"X-Storage-Key": key, "Content-Type": content_type},
+        data=data, timeout=120,
+    )
+    if r.status_code == 403:
+        # refresh key and retry once
+        globals()["_storage_key"] = None
+        key = init_storage()
+        r = requests.put(
+            f"{STORAGE_URL}/objects/{path}",
+            headers={"X-Storage-Key": key, "Content-Type": content_type},
+            data=data, timeout=120,
+        )
+    r.raise_for_status()
+    return r.json()
+
+
+def storage_get(path: str) -> tuple[bytes, str]:
+    key = init_storage()
+    r = requests.get(
+        f"{STORAGE_URL}/objects/{path}",
+        headers={"X-Storage-Key": key}, timeout=60,
+    )
+    if r.status_code == 403:
+        globals()["_storage_key"] = None
+        key = init_storage()
+        r = requests.get(
+            f"{STORAGE_URL}/objects/{path}",
+            headers={"X-Storage-Key": key}, timeout=60,
+        )
+    r.raise_for_status()
+    return r.content, r.headers.get("Content-Type", "application/octet-stream")
+
+
+@api_router.post("/admin/files/upload")
+async def admin_upload(file: UploadFile = File(...), _user: Dict = Depends(require_admin)):
+    if file.content_type not in ALLOWED_MIME:
+        raise HTTPException(status_code=400, detail=f"Unsupported type: {file.content_type}")
+    data = await file.read()
+    if len(data) > MAX_UPLOAD_SIZE:
+        raise HTTPException(status_code=413, detail="File exceeds 5MB limit")
+    ext = ALLOWED_MIME[file.content_type]
+    file_id = str(uuid.uuid4())
+    path = f"{APP_NAME}/uploads/{file_id}.{ext}"
+    try:
+        result = storage_put(path, data, file.content_type)
+    except requests.HTTPError as e:
+        raise HTTPException(status_code=502, detail=f"Storage upload failed: {e}")
+    doc = {
+        "id": file_id,
+        "storage_path": result.get("path", path),
+        "original_filename": file.filename,
+        "content_type": file.content_type,
+        "size": result.get("size", len(data)),
+        "is_deleted": False,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.files.insert_one(dict(doc))
+    return {
+        "id": file_id,
+        "url": f"/api/files/{file_id}",
+        "filename": file.filename,
+        "content_type": file.content_type,
+        "size": doc["size"],
+        "created_at": doc["created_at"],
+    }
+
+
+@api_router.get("/admin/files")
+async def admin_list_files(_user: Dict = Depends(require_admin)):
+    docs = await db.files.find({"is_deleted": False}, {"_id": 0}).sort("created_at", -1).to_list(500)
+    for d in docs:
+        d["url"] = f"/api/files/{d['id']}"
+    return docs
+
+
+@api_router.delete("/admin/files/{file_id}")
+async def admin_delete_file(file_id: str, _user: Dict = Depends(require_admin)):
+    res = await db.files.update_one({"id": file_id}, {"$set": {"is_deleted": True}})
+    if res.matched_count == 0:
+        raise HTTPException(status_code=404, detail="File not found")
+    return {"ok": True}
+
+
+@api_router.get("/files/{file_id}")
+async def public_file(file_id: str):
+    doc = await db.files.find_one({"id": file_id, "is_deleted": False}, {"_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="File not found")
+    try:
+        data, content_type = storage_get(doc["storage_path"])
+    except requests.HTTPError as e:
+        raise HTTPException(status_code=502, detail=f"Storage fetch failed: {e}")
+    return Response(content=data, media_type=doc.get("content_type", content_type), headers={
+        "Cache-Control": "public, max-age=86400",
+    })
+
+
 # ---------- Health ----------
 @api_router.get("/")
 async def root():
@@ -471,6 +598,15 @@ async def startup():
     await db.users.create_index("email", unique=True)
     await db.content.create_index("section", unique=True)
     await db.forum_messages.create_index("created_at")
+    await db.files.create_index("id", unique=True)
+    await db.files.create_index("created_at")
+
+    # Init storage (best-effort)
+    try:
+        init_storage()
+        logger.info("Object storage initialized")
+    except Exception as e:
+        logger.warning(f"Storage init failed (will retry on first upload): {e}")
 
     admin_email = os.environ.get("ADMIN_EMAIL", "admin@portfolio.dev").lower()
     admin_password = os.environ.get("ADMIN_PASSWORD", "admin123")

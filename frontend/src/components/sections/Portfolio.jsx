@@ -151,20 +151,20 @@ function PortfolioModal({ item, lang, onClose }) {
         exit={{ opacity: 0, scale: 0.96, y: 12 }}
         transition={{ type: "spring", stiffness: 260, damping: 24 }}
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-5xl max-h-[88vh] overflow-hidden grid lg:grid-cols-5 bg-background border border-primary/30 rounded-lg shadow-[0_0_60px_-12px_rgba(0,240,255,0.4)]"
+        className="relative w-full max-w-5xl max-h-[92vh] flex flex-col lg:grid lg:grid-cols-5 bg-background border border-primary/30 rounded-lg shadow-[0_0_60px_-12px_rgba(0,240,255,0.4)] overflow-hidden"
       >
         {/* Close */}
         <button
           onClick={onClose}
           data-testid="portfolio-modal-close"
           aria-label="Close"
-          className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/60 hover:bg-black/90 border border-white/20 hover:border-primary text-white hover:text-primary backdrop-blur-md transition-colors"
+          className="absolute top-3 right-3 z-20 p-2 rounded-full bg-black/70 hover:bg-black/90 border border-white/30 hover:border-primary text-white hover:text-primary backdrop-blur-md transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Image */}
-        <div className="relative lg:col-span-3 aspect-[16/10] lg:aspect-auto bg-secondary overflow-hidden">
+        <div className="relative lg:col-span-3 shrink-0 aspect-[16/9] lg:aspect-auto lg:h-auto bg-secondary overflow-hidden">
           {item.image && (
             <img
               src={item.image}
@@ -172,14 +172,14 @@ function PortfolioModal({ item, lang, onClose }) {
               className="w-full h-full object-cover"
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/30 lg:to-background/0" />
+          <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-background via-background/40 to-transparent lg:from-transparent lg:to-background/0" />
         </div>
 
         {/* Content */}
-        <div className="lg:col-span-2 p-6 sm:p-8 overflow-y-auto flex flex-col gap-4">
+        <div className="lg:col-span-2 p-5 sm:p-7 overflow-y-auto flex-1 flex flex-col gap-4 min-h-0">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary">// PROJECT</p>
-            <h3 className="font-heading text-2xl sm:text-3xl font-bold tracking-tighter mt-1.5" data-testid="portfolio-modal-title">
+            <h3 className="font-heading text-xl sm:text-2xl lg:text-3xl font-bold tracking-tighter mt-1.5" data-testid="portfolio-modal-title">
               {item.title}
             </h3>
             <p className="text-sm text-muted-foreground mt-1">{desc}</p>
