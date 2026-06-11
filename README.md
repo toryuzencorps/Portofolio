@@ -22,6 +22,76 @@ Section yang ada: **Summary · Skills · Experience · Portfolio · Education ·
 
 ---
 
+## ⚡ Quick Start — 1 Command Deploy (Docker)
+
+**Cara tercepat: clone → run → buka browser.** Tanpa setup Python, Node, MongoDB, atau env var apapun (auto-generate).
+
+### Syarat
+- **Docker Desktop** terinstall — https://docs.docker.com/get-docker/
+
+### Langkah
+
+```bash
+# 1. Clone repository
+git clone <your-repo-url>
+cd portfolio-cv
+
+# 2. Jalankan setup script (otomatis bikin .env, build, start semua service)
+./setup.sh
+```
+
+**Selesai!** Buka:
+- 🌐 Frontend:    http://localhost:3000
+- 🔧 Backend API: http://localhost:8001/api/
+- 🔐 Admin login: http://localhost:3000/admin/login
+
+Login admin default:
+- Email: `admin@portfolio.dev`
+- Password: `admin123`
+
+> ⚠️ **Untuk production**: edit file `.env` dulu sebelum jalanin `./setup.sh` — ubah `ADMIN_EMAIL`, `ADMIN_PASSWORD`, dan tambahkan `EMERGENT_LLM_KEY` jika butuh file upload.
+
+### Manual Docker Compose (tanpa script)
+
+```bash
+git clone <your-repo-url>
+cd portfolio-cv
+cp .env.example .env
+# Edit .env, ganti JWT_SECRET dengan: openssl rand -hex 32
+docker compose up -d --build
+```
+
+### Command Berguna
+
+```bash
+# Stop semua service
+docker compose down
+
+# Stop + hapus data MongoDB (full reset)
+docker compose down -v
+
+# Lihat logs realtime
+docker compose logs -f
+
+# Restart backend saja
+docker compose restart backend
+
+# Rebuild setelah update code
+docker compose up -d --build
+```
+
+### One-Click Deploy ke Cloud
+
+| Provider | Caranya |
+|----------|---------|
+| **Emergent** | Klik tombol "Deploy" di interface Emergent → done (paling mudah) |
+| **Railway** | `railway up` (Railway auto-detect `docker-compose.yml`) |
+| **Render** | Connect repo → buat 3 services dari `docker-compose.yml` |
+| **Fly.io** | `flyctl launch` di tiap folder (`backend`, `frontend`) |
+| **DigitalOcean App Platform** | Import GitHub repo → auto-detect Docker compose |
+
+---
+
 ## 🛠 Tech Stack
 
 ### Backend
@@ -61,7 +131,9 @@ Install yang belum ada:
 
 ---
 
-## 🚀 Instalasi dari Awal
+## 🚀 Instalasi Manual (tanpa Docker)
+
+> Skip section ini kalau sudah pakai **Quick Start (Docker)** di atas. Cocok untuk development atau kalau tidak mau pakai Docker.
 
 ### 1. Clone Repository
 
