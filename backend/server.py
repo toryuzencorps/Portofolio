@@ -141,11 +141,13 @@ def _exp_item(role, company, period, en_text, id_text, stack=None, highlights_en
     }
 
 
-def _proj_item(title, tags, image, url, en_text, id_text):
+def _proj_item(title, tags, image, url, en_text, id_text, en_details=None, id_details=None, year=None, role=None):
     return {
         "id": str(uuid.uuid4()),
         "title": title, "tags": tags, "image": image, "url": url,
+        "year": year, "role": role,
         "i18n": {"en": en_text, "id": id_text},
+        "details": {"en": en_details or en_text, "id": id_details or id_text},
     }
 
 
@@ -300,21 +302,39 @@ DEFAULT_CONTENT = {
     },
     "portfolio": {
         "items": [
-            _proj_item("Realtime Collab Editor", ["WebSocket", "React", "CRDT"],
-                       "https://images.pexels.com/photos/10325707/pexels-photo-10325707.png?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                       "#",
-                       "Multi-user collaborative editor with conflict-free replicated data types.",
-                       "Editor kolaboratif multi-user dengan CRDT bebas konflik."),
-            _proj_item("EdgeCache CDN", ["Go", "Distributed", "Redis"],
-                       "https://images.unsplash.com/photo-1759661881353-5b9cc55e1cf4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwxfHxjeWJlcnB1bmslMjBkZXZlbG9wZXIlMjB3b3Jrc3BhY2V8ZW58MHx8fHwxNzgxMTg1MjAyfDA&ixlib=rb-4.1.0&q=85",
-                       "#",
-                       "Lightweight edge CDN with intelligent geo-routing.",
-                       "CDN edge ringan dengan geo-routing cerdas."),
-            _proj_item("DataViz Dashboard", ["D3.js", "React", "WebGL"],
-                       "https://images.pexels.com/photos/34212896/pexels-photo-34212896.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                       "#",
-                       "Interactive analytics dashboard rendering 1M+ datapoints.",
-                       "Dashboard analitik interaktif merender 1JT+ datapoint."),
+            _proj_item(
+                "Realtime Collab Editor",
+                ["WebSocket", "React", "CRDT"],
+                "https://images.pexels.com/photos/10325707/pexels-photo-10325707.png?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+                "https://github.com",
+                "Multi-user collaborative editor with CRDT.",
+                "Editor kolaboratif multi-user dengan CRDT.",
+                en_details="A multi-user collaborative text editor built on Conflict-free Replicated Data Types (CRDT). Handles offline editing, automatic conflict resolution, and seamless realtime sync over websocket. Used by 5+ teams in production to coordinate documentation, design briefs, and engineering specs without merge conflicts.",
+                id_details="Editor teks kolaboratif multi-user yang dibangun di atas CRDT (Conflict-free Replicated Data Types). Mendukung editing offline, resolusi konflik otomatis, dan sinkronisasi realtime via websocket. Digunakan oleh 5+ tim di production untuk kolaborasi dokumentasi, brief desain, dan spec engineering tanpa konflik merge.",
+                year="2024", role="Lead Engineer",
+            ),
+            _proj_item(
+                "EdgeCache CDN",
+                ["Go", "Distributed", "Redis"],
+                "https://images.unsplash.com/photo-1759661881353-5b9cc55e1cf4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwxfHxjeWJlcnB1bmslMjBkZXZlbG9wZXIlMjB3b3Jrc3BhY2V8ZW58MHx8fHwxNzgxMTg1MjAyfDA&ixlib=rb-4.1.0&q=85",
+                "https://github.com",
+                "Lightweight edge CDN with intelligent geo-routing.",
+                "CDN edge ringan dengan geo-routing cerdas.",
+                en_details="A lightweight, programmable edge CDN written in Go. Features intelligent geo-routing based on RTT measurements, Redis-backed cache invalidation, and a plugin system for custom transformations. Deployed across 12 regions and serves 50M+ requests/day with p95 latency under 40ms.",
+                id_details="CDN edge yang ringan dan programmable, ditulis dalam Go. Fitur geo-routing cerdas berbasis pengukuran RTT, invalidasi cache via Redis, dan sistem plugin untuk transformasi custom. Di-deploy di 12 region dan melayani 50JT+ request/hari dengan latensi p95 di bawah 40ms.",
+                year="2023", role="Architect",
+            ),
+            _proj_item(
+                "DataViz Dashboard",
+                ["D3.js", "React", "WebGL"],
+                "https://images.pexels.com/photos/34212896/pexels-photo-34212896.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+                "https://github.com",
+                "Interactive analytics dashboard rendering 1M+ datapoints.",
+                "Dashboard analitik interaktif merender 1JT+ datapoint.",
+                en_details="A high-performance analytics dashboard that renders 1M+ datapoints smoothly using a hybrid D3.js + WebGL pipeline. Supports realtime updates, custom dashboards via drag-and-drop, and embeddable widgets. Powered the data ops team of a unicorn fintech for 18 months.",
+                id_details="Dashboard analitik berperforma tinggi yang merender 1JT+ datapoint dengan lancar menggunakan pipeline hybrid D3.js + WebGL. Mendukung update realtime, dashboard custom via drag-and-drop, dan widget yang bisa di-embed. Memberdayakan tim data ops unicorn fintech selama 18 bulan.",
+                year="2022", role="Frontend Lead",
+            ),
         ]
     },
     "education": {
