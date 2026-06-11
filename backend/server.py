@@ -131,11 +131,13 @@ async def me(user: Dict[str, Any] = Depends(get_current_user)):
 SECTIONS = {"summary", "skills", "experience", "portfolio", "education", "contact"}
 
 
-def _exp_item(role, company, period, en_text, id_text):
+def _exp_item(role, company, period, en_text, id_text, stack=None, highlights_en=None, highlights_id=None, location="Remote"):
     return {
         "id": str(uuid.uuid4()),
-        "role": role, "company": company, "period": period,
+        "role": role, "company": company, "period": period, "location": location,
+        "stack": stack or [],
         "i18n": {"en": en_text, "id": id_text},
+        "highlights": {"en": highlights_en or [], "id": highlights_id or []},
     }
 
 
@@ -178,23 +180,122 @@ DEFAULT_CONTENT = {
     },
     "skills": {
         "categories": [
-            {"name": "Frontend", "items": ["React", "TypeScript", "Next.js", "TailwindCSS", "Framer Motion"]},
-            {"name": "Backend", "items": ["Python", "FastAPI", "Node.js", "GraphQL", "WebSocket"]},
-            {"name": "Database", "items": ["MongoDB", "PostgreSQL", "Redis", "Elasticsearch"]},
-            {"name": "DevOps", "items": ["Docker", "Kubernetes", "AWS", "Terraform", "CI/CD"]},
+            {
+                "name": "Frontend",
+                "icon": "Code2",
+                "summary": {
+                    "en": "Modern reactive UIs, animations, design systems, and accessibility-first interfaces.",
+                    "id": "UI reaktif modern, animasi, design system, dan antarmuka yang accessibility-first.",
+                },
+                "items": [
+                    {"name": "React", "level": 95, "years": 6, "i18n": {"en": "Hooks, Suspense, Server Components, performance profiling, advanced patterns.", "id": "Hooks, Suspense, Server Components, profiling performa, pola lanjutan."}},
+                    {"name": "TypeScript", "level": 90, "years": 5, "i18n": {"en": "Strict typing, generics, conditional types, monorepo setups.", "id": "Typing ketat, generics, conditional types, setup monorepo."}},
+                    {"name": "Next.js", "level": 88, "years": 4, "i18n": {"en": "App router, RSC, ISR, edge runtime, middleware.", "id": "App router, RSC, ISR, edge runtime, middleware."}},
+                    {"name": "TailwindCSS", "level": 92, "years": 4, "i18n": {"en": "Design tokens, custom plugins, dark/light themes.", "id": "Design tokens, plugin custom, tema gelap/terang."}},
+                    {"name": "Framer Motion", "level": 80, "years": 3, "i18n": {"en": "Choreographed animations, gestures, layout transitions.", "id": "Animasi terkoreografi, gesture, transisi layout."}},
+                ],
+            },
+            {
+                "name": "Backend",
+                "icon": "Server",
+                "summary": {
+                    "en": "Scalable APIs, realtime systems, and event-driven architectures.",
+                    "id": "API scalable, sistem realtime, dan arsitektur event-driven.",
+                },
+                "items": [
+                    {"name": "Python", "level": 92, "years": 7, "i18n": {"en": "AsyncIO, FastAPI, data pipelines, testing with pytest.", "id": "AsyncIO, FastAPI, data pipeline, testing dengan pytest."}},
+                    {"name": "FastAPI", "level": 90, "years": 3, "i18n": {"en": "Dependency injection, OAuth2, websockets, OpenAPI.", "id": "Dependency injection, OAuth2, websockets, OpenAPI."}},
+                    {"name": "Node.js", "level": 85, "years": 5, "i18n": {"en": "Express, NestJS, streams, performance tuning.", "id": "Express, NestJS, streams, tuning performa."}},
+                    {"name": "GraphQL", "level": 78, "years": 3, "i18n": {"en": "Schema design, resolvers, dataloader, federation.", "id": "Desain schema, resolver, dataloader, federation."}},
+                    {"name": "WebSocket", "level": 88, "years": 4, "i18n": {"en": "Realtime broadcast, pub/sub, presence systems.", "id": "Broadcast realtime, pub/sub, sistem presence."}},
+                ],
+            },
+            {
+                "name": "Database",
+                "icon": "Database",
+                "summary": {
+                    "en": "Modeling, indexing, sharding, and replication for high-throughput systems.",
+                    "id": "Modeling, indexing, sharding, dan replikasi untuk sistem high-throughput.",
+                },
+                "items": [
+                    {"name": "MongoDB", "level": 88, "years": 5, "i18n": {"en": "Aggregation pipelines, change streams, replica sets.", "id": "Aggregation pipeline, change stream, replica set."}},
+                    {"name": "PostgreSQL", "level": 90, "years": 6, "i18n": {"en": "Advanced queries, JSONB, partitioning, performance tuning.", "id": "Query lanjutan, JSONB, partitioning, tuning performa."}},
+                    {"name": "Redis", "level": 85, "years": 5, "i18n": {"en": "Caching, pub/sub, rate limiting, streams.", "id": "Caching, pub/sub, rate limiting, streams."}},
+                    {"name": "Elasticsearch", "level": 75, "years": 3, "i18n": {"en": "Full-text search, analyzers, relevance tuning.", "id": "Full-text search, analyzer, tuning relevansi."}},
+                ],
+            },
+            {
+                "name": "DevOps & Network",
+                "icon": "Cloud",
+                "summary": {
+                    "en": "Infrastructure as code, observability, CI/CD, and network engineering.",
+                    "id": "Infrastructure as code, observabilitas, CI/CD, dan rekayasa jaringan.",
+                },
+                "items": [
+                    {"name": "Docker", "level": 90, "years": 6, "i18n": {"en": "Multi-stage builds, compose, lightweight images.", "id": "Multi-stage build, compose, image ringan."}},
+                    {"name": "Kubernetes", "level": 82, "years": 4, "i18n": {"en": "Deployments, helm charts, ingress, autoscaling.", "id": "Deployment, helm chart, ingress, autoscaling."}},
+                    {"name": "AWS", "level": 85, "years": 5, "i18n": {"en": "EC2, S3, Lambda, CloudFront, IAM, VPC.", "id": "EC2, S3, Lambda, CloudFront, IAM, VPC."}},
+                    {"name": "Terraform", "level": 78, "years": 3, "i18n": {"en": "Modules, remote state, multi-environment workflows.", "id": "Module, remote state, workflow multi-environment."}},
+                    {"name": "Networking", "level": 80, "years": 5, "i18n": {"en": "TCP/IP, DNS, TLS, load balancing, CDN edge routing.", "id": "TCP/IP, DNS, TLS, load balancing, CDN edge routing."}},
+                ],
+            },
         ]
     },
     "experience": {
         "items": [
-            _exp_item("Senior Full-Stack Engineer", "Nebula Labs", "2023 — Present",
-                      "Leading architecture for a real-time collaboration platform. Reduced latency by 60% through edge-cached websocket infrastructure.",
-                      "Memimpin arsitektur platform kolaborasi real-time. Mengurangi latensi 60% melalui infrastruktur websocket terdistribusi."),
-            _exp_item("Software Engineer", "Quantum Forge", "2020 — 2023",
-                      "Built fintech APIs handling 1M+ requests/day. Migrated legacy stack to event-driven microservices.",
-                      "Membangun API fintech yang menangani 1JT+ request/hari. Migrasi stack lama ke microservices event-driven."),
-            _exp_item("Junior Developer", "Pixel Studio", "2018 — 2020",
-                      "Crafted client-facing web apps with React and shipped 20+ production releases.",
-                      "Membuat aplikasi web client-facing dengan React dan merilis 20+ release production."),
+            _exp_item(
+                "Senior Full-Stack Engineer", "Nebula Labs", "2023 — Present",
+                "Leading architecture for a real-time collaboration platform. Reduced latency by 60% through edge-cached websocket infrastructure.",
+                "Memimpin arsitektur platform kolaborasi real-time. Mengurangi latensi 60% melalui infrastruktur websocket terdistribusi.",
+                stack=["React", "TypeScript", "Node.js", "Redis", "AWS", "WebSocket"],
+                location="San Francisco, CA (Hybrid)",
+                highlights_en=[
+                    "Architected a CRDT-based realtime engine handling 200k concurrent users.",
+                    "Reduced p99 latency by 60% via edge-cached websocket gateways.",
+                    "Mentored 4 engineers and ran weekly architecture reviews.",
+                    "Owned migration to event-driven microservices on Kubernetes.",
+                ],
+                highlights_id=[
+                    "Merancang engine realtime berbasis CRDT untuk 200rb pengguna konkuren.",
+                    "Mengurangi latensi p99 sebesar 60% via gateway websocket edge-cached.",
+                    "Mentoring 4 engineer dan memimpin review arsitektur mingguan.",
+                    "Memimpin migrasi ke microservices event-driven di Kubernetes.",
+                ],
+            ),
+            _exp_item(
+                "Software Engineer", "Quantum Forge", "2020 — 2023",
+                "Built fintech APIs handling 1M+ requests/day. Migrated legacy stack to event-driven microservices.",
+                "Membangun API fintech yang menangani 1JT+ request/hari. Migrasi stack lama ke microservices event-driven.",
+                stack=["Python", "FastAPI", "PostgreSQL", "Kafka", "Docker"],
+                location="New York, NY",
+                highlights_en=[
+                    "Designed payment ledger handling 1M+ transactions/day with strong consistency.",
+                    "Introduced Kafka-based event bus reducing inter-service coupling.",
+                    "Improved test coverage from 42% to 89% across core services.",
+                ],
+                highlights_id=[
+                    "Mendesain payment ledger menangani 1JT+ transaksi/hari dengan konsistensi kuat.",
+                    "Memperkenalkan event bus berbasis Kafka, mengurangi coupling antar service.",
+                    "Meningkatkan coverage test dari 42% ke 89% di core services.",
+                ],
+            ),
+            _exp_item(
+                "Junior Developer", "Pixel Studio", "2018 — 2020",
+                "Crafted client-facing web apps with React and shipped 20+ production releases.",
+                "Membuat aplikasi web client-facing dengan React dan merilis 20+ release production.",
+                stack=["React", "Redux", "SCSS", "Node.js"],
+                location="Remote",
+                highlights_en=[
+                    "Shipped 20+ React-based production releases for 12 clients.",
+                    "Built reusable component library used across 6 projects.",
+                    "Won internal hackathon with a realtime dashboard prototype.",
+                ],
+                highlights_id=[
+                    "Merilis 20+ release production berbasis React untuk 12 klien.",
+                    "Membangun komponen library reusable yang dipakai di 6 proyek.",
+                    "Memenangkan hackathon internal dengan prototype dashboard realtime.",
+                ],
+            ),
         ]
     },
     "portfolio": {
