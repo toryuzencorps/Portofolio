@@ -89,9 +89,33 @@
   .font-mono { font-family: 'JetBrains Mono', monospace; }
 }
 
-/* Selection — works for both dark & light */
-::selection { background: hsl(var(--primary) / 0.85); color: #ffffff; text-shadow: none; }
-::-moz-selection { background: hsl(var(--primary) / 0.85); color: #ffffff; text-shadow: none; }
+/* Selection — high contrast in both modes.
+   Dark: cyan bg + black text
+   Light: navy/black bg + cyan text (inverse for max contrast against brand-blue text) */
+::selection {
+  background-color: #00F0FF !important;
+  color: #050505 !important;
+  text-shadow: none !important;
+  -webkit-text-fill-color: #050505 !important;
+}
+::-moz-selection {
+  background-color: #00F0FF !important;
+  color: #050505 !important;
+  text-shadow: none !important;
+}
+.light ::selection,
+html.light ::selection {
+  background-color: #0A1024 !important;
+  color: #00F0FF !important;
+  text-shadow: none !important;
+  -webkit-text-fill-color: #00F0FF !important;
+}
+.light ::-moz-selection,
+html.light ::-moz-selection {
+  background-color: #0A1024 !important;
+  color: #00F0FF !important;
+  text-shadow: none !important;
+}
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
