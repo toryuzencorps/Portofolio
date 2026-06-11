@@ -10,10 +10,9 @@ import uuid
 import bcrypt
 import jwt
 from datetime import datetime, timezone, timedelta
-from typing import List, Optional, Dict, Any
+from typing import List, Dict, Any
 
 from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends, WebSocket, WebSocketDisconnect
-from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field, EmailStr
@@ -131,24 +130,51 @@ async def me(user: Dict[str, Any] = Depends(get_current_user)):
 # ---------- CONTENT ROUTES ----------
 SECTIONS = {"summary", "skills", "experience", "portfolio", "education", "contact"}
 
+
+def _exp_item(role, company, period, en_text, id_text):
+    return {
+        "id": str(uuid.uuid4()),
+        "role": role, "company": company, "period": period,
+        "i18n": {"en": en_text, "id": id_text},
+    }
+
+
+def _proj_item(title, tags, image, url, en_text, id_text):
+    return {
+        "id": str(uuid.uuid4()),
+        "title": title, "tags": tags, "image": image, "url": url,
+        "i18n": {"en": en_text, "id": id_text},
+    }
+
+
+def _edu_item(degree, school, period, en_text, id_text):
+    return {
+        "id": str(uuid.uuid4()),
+        "degree": degree, "school": school, "period": period,
+        "i18n": {"en": en_text, "id": id_text},
+    }
+
+
 DEFAULT_CONTENT = {
     "summary": {
-        "en": {
-            "name": "Alex Rivera",
-            "title": "Full-Stack Developer & Systems Engineer",
-            "tagline": "Building elegant, scalable products at the intersection of code and design.",
-            "bio": "I architect performant web platforms with a focus on developer experience, real-time systems, and beautiful interfaces. Currently exploring distributed systems and edge computing.",
-            "location": "San Francisco, CA",
-            "available": True,
-        },
-        "id": {
-            "name": "Alex Rivera",
-            "title": "Full-Stack Developer & Systems Engineer",
-            "tagline": "Membangun produk yang elegan dan scalable di persimpangan code dan desain.",
-            "bio": "Saya merancang platform web berperforma tinggi dengan fokus pada developer experience, sistem real-time, dan antarmuka yang indah. Saat ini mendalami sistem terdistribusi dan edge computing.",
-            "location": "San Francisco, CA",
-            "available": True,
-        },
+        "i18n": {
+            "en": {
+                "name": "Alex Rivera",
+                "title": "Full-Stack Developer & Systems Engineer",
+                "tagline": "Building elegant, scalable products at the intersection of code and design.",
+                "bio": "I architect performant web platforms with a focus on developer experience, real-time systems, and beautiful interfaces. Currently exploring distributed systems and edge computing.",
+                "location": "San Francisco, CA",
+                "available": True,
+            },
+            "id": {
+                "name": "Alex Rivera",
+                "title": "Full-Stack Developer & Systems Engineer",
+                "tagline": "Membangun produk yang elegan dan scalable di persimpangan code dan desain.",
+                "bio": "Saya merancang platform web berperforma tinggi dengan fokus pada developer experience, sistem real-time, dan antarmuka yang indah. Saat ini mendalami sistem terdistribusi dan edge computing.",
+                "location": "San Francisco, CA",
+                "available": True,
+            },
+        }
     },
     "skills": {
         "categories": [
@@ -160,81 +186,44 @@ DEFAULT_CONTENT = {
     },
     "experience": {
         "items": [
-            {
-                "id": str(uuid.uuid4()),
-                "role": "Senior Full-Stack Engineer",
-                "company": "Nebula Labs",
-                "period": "2023 — Present",
-                "en": "Leading architecture for a real-time collaboration platform. Reduced latency by 60% through edge-cached websocket infrastructure.",
-                "id": "Memimpin arsitektur platform kolaborasi real-time. Mengurangi latensi 60% melalui infrastruktur websocket terdistribusi.",
-            },
-            {
-                "id": str(uuid.uuid4()),
-                "role": "Software Engineer",
-                "company": "Quantum Forge",
-                "period": "2020 — 2023",
-                "en": "Built fintech APIs handling 1M+ requests/day. Migrated legacy stack to event-driven microservices.",
-                "id": "Membangun API fintech yang menangani 1JT+ request/hari. Migrasi stack lama ke microservices event-driven.",
-            },
-            {
-                "id": str(uuid.uuid4()),
-                "role": "Junior Developer",
-                "company": "Pixel Studio",
-                "period": "2018 — 2020",
-                "en": "Crafted client-facing web apps with React and shipped 20+ production releases.",
-                "id": "Membuat aplikasi web client-facing dengan React dan merilis 20+ release production.",
-            },
+            _exp_item("Senior Full-Stack Engineer", "Nebula Labs", "2023 — Present",
+                      "Leading architecture for a real-time collaboration platform. Reduced latency by 60% through edge-cached websocket infrastructure.",
+                      "Memimpin arsitektur platform kolaborasi real-time. Mengurangi latensi 60% melalui infrastruktur websocket terdistribusi."),
+            _exp_item("Software Engineer", "Quantum Forge", "2020 — 2023",
+                      "Built fintech APIs handling 1M+ requests/day. Migrated legacy stack to event-driven microservices.",
+                      "Membangun API fintech yang menangani 1JT+ request/hari. Migrasi stack lama ke microservices event-driven."),
+            _exp_item("Junior Developer", "Pixel Studio", "2018 — 2020",
+                      "Crafted client-facing web apps with React and shipped 20+ production releases.",
+                      "Membuat aplikasi web client-facing dengan React dan merilis 20+ release production."),
         ]
     },
     "portfolio": {
         "items": [
-            {
-                "id": str(uuid.uuid4()),
-                "title": "Realtime Collab Editor",
-                "tags": ["WebSocket", "React", "CRDT"],
-                "image": "https://images.pexels.com/photos/10325707/pexels-photo-10325707.png?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                "url": "#",
-                "en": "Multi-user collaborative editor with conflict-free replicated data types.",
-                "id": "Editor kolaboratif multi-user dengan CRDT bebas konflik.",
-            },
-            {
-                "id": str(uuid.uuid4()),
-                "title": "EdgeCache CDN",
-                "tags": ["Go", "Distributed", "Redis"],
-                "image": "https://images.unsplash.com/photo-1759661881353-5b9cc55e1cf4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwxfHxjeWJlcnB1bmslMjBkZXZlbG9wZXIlMjB3b3Jrc3BhY2V8ZW58MHx8fHwxNzgxMTg1MjAyfDA&ixlib=rb-4.1.0&q=85",
-                "url": "#",
-                "en": "Lightweight edge CDN with intelligent geo-routing.",
-                "id": "CDN edge ringan dengan geo-routing cerdas.",
-            },
-            {
-                "id": str(uuid.uuid4()),
-                "title": "DataViz Dashboard",
-                "tags": ["D3.js", "React", "WebGL"],
-                "image": "https://images.pexels.com/photos/34212896/pexels-photo-34212896.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                "url": "#",
-                "en": "Interactive analytics dashboard rendering 1M+ datapoints.",
-                "id": "Dashboard analitik interaktif merender 1JT+ datapoint.",
-            },
+            _proj_item("Realtime Collab Editor", ["WebSocket", "React", "CRDT"],
+                       "https://images.pexels.com/photos/10325707/pexels-photo-10325707.png?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+                       "#",
+                       "Multi-user collaborative editor with conflict-free replicated data types.",
+                       "Editor kolaboratif multi-user dengan CRDT bebas konflik."),
+            _proj_item("EdgeCache CDN", ["Go", "Distributed", "Redis"],
+                       "https://images.unsplash.com/photo-1759661881353-5b9cc55e1cf4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwxfHxjeWJlcnB1bmslMjBkZXZlbG9wZXIlMjB3b3Jrc3BhY2V8ZW58MHx8fHwxNzgxMTg1MjAyfDA&ixlib=rb-4.1.0&q=85",
+                       "#",
+                       "Lightweight edge CDN with intelligent geo-routing.",
+                       "CDN edge ringan dengan geo-routing cerdas."),
+            _proj_item("DataViz Dashboard", ["D3.js", "React", "WebGL"],
+                       "https://images.pexels.com/photos/34212896/pexels-photo-34212896.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+                       "#",
+                       "Interactive analytics dashboard rendering 1M+ datapoints.",
+                       "Dashboard analitik interaktif merender 1JT+ datapoint."),
         ]
     },
     "education": {
         "items": [
-            {
-                "id": str(uuid.uuid4()),
-                "degree": "M.Sc. Computer Science",
-                "school": "Stanford University",
-                "period": "2016 — 2018",
-                "en": "Specialized in distributed systems and human-computer interaction.",
-                "id": "Spesialisasi sistem terdistribusi dan interaksi manusia-komputer.",
-            },
-            {
-                "id": str(uuid.uuid4()),
-                "degree": "B.Sc. Software Engineering",
-                "school": "UC Berkeley",
-                "period": "2012 — 2016",
-                "en": "Graduated with honors. Capstone: real-time multiplayer game engine.",
-                "id": "Lulus dengan pujian. Capstone: engine game multiplayer real-time.",
-            },
+            _edu_item("M.Sc. Computer Science", "Stanford University", "2016 — 2018",
+                      "Specialized in distributed systems and human-computer interaction.",
+                      "Spesialisasi sistem terdistribusi dan interaksi manusia-komputer."),
+            _edu_item("B.Sc. Software Engineering", "UC Berkeley", "2012 — 2016",
+                      "Graduated with honors. Capstone: real-time multiplayer game engine.",
+                      "Lulus dengan pujian. Capstone: engine game multiplayer real-time."),
         ]
     },
     "contact": {
@@ -342,7 +331,6 @@ async def ws_forum(ws: WebSocket):
     await manager.connect(ws)
     try:
         while True:
-            # Keep alive; we only broadcast from POST endpoint
             await ws.receive_text()
     except WebSocketDisconnect:
         manager.disconnect(ws)
