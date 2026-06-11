@@ -102,26 +102,19 @@ export default function Skills({ data }) {
                         className="border border-border bg-background/40 rounded-sm p-4 hover:border-primary/40 transition-colors"
                         data-testid={`skill-item-${it.name}`}
                       >
-                        <div className="flex items-baseline justify-between gap-3 mb-2">
+                        <div className="flex items-baseline justify-between gap-3 mb-1.5">
                           <div className="flex items-baseline gap-2 min-w-0">
                             <span className="font-mono text-[10px] text-primary">{String(i + 1).padStart(2, "0")}</span>
                             <span className="font-heading font-bold tracking-tight truncate">{it.name}</span>
                           </div>
-                          <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground shrink-0">
-                            {it.years}y · {it.level}%
-                          </span>
-                        </div>
-                        <div className="h-1.5 bg-background border border-border rounded-full overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${it.level}%` }}
-                            transition={{ duration: 0.8, delay: 0.1 + i * 0.05, ease: "easeOut" }}
-                            className="h-full bg-primary"
-                            style={{ boxShadow: "0 0 12px hsl(var(--primary) / 0.6)" }}
-                          />
+                          {it.years ? (
+                            <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground shrink-0">
+                              {it.years} {it.years === 1 ? "yr" : "yrs"}
+                            </span>
+                          ) : null}
                         </div>
                         {(it.i18n?.[lang] || it.i18n?.en) && (
-                          <p className="text-xs text-muted-foreground mt-2.5 leading-relaxed">
+                          <p className="text-xs text-muted-foreground leading-relaxed">
                             {it.i18n[lang] || it.i18n.en}
                           </p>
                         )}
