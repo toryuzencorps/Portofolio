@@ -112,7 +112,7 @@ export default function FileManager() {
           <div>
             <p className="font-heading text-base font-bold tracking-tight">File Manager</p>
             <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-              {files.length} files · {fmtSize(totalSize)}
+              /{`assets`} · {files.length} files · {fmtSize(totalSize)}
             </p>
           </div>
         </div>

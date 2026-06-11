@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useLang } from "@/contexts/LanguageContext";
-import { Mail, Github, Linkedin, Twitter, Copy, Check, ArrowUpRight, MessageSquare, Send } from "lucide-react";
+import { Mail, Github, Linkedin, Instagram, Copy, Check, ArrowUpRight, MessageSquare, Send } from "lucide-react";
 import SectionShape from "@/components/SectionShape";
 
 const SOCIAL_META = {
-  github:   { icon: Github,   label: "GitHub",   handle: "@github",   color: "#FFFFFF" },
-  linkedin: { icon: Linkedin, label: "LinkedIn", handle: "in/profile", color: "#0A66C2" },
-  twitter:  { icon: Twitter,  label: "Twitter",  handle: "@twitter",  color: "#1DA1F2" },
+  github:    { icon: Github,    label: "GitHub",    handle: "@github",    color: "#FFFFFF" },
+  linkedin:  { icon: Linkedin,  label: "LinkedIn",  handle: "in/profile", color: "#0A66C2" },
+  instagram: { icon: Instagram, label: "Instagram", handle: "@instagram", color: "#E4405F" },
 };
 
 export default function Contact({ data }) {
@@ -23,7 +23,7 @@ export default function Contact({ data }) {
     } catch (_e) { /* ignore */ }
   };
 
-  const socials = ["github", "linkedin", "twitter"]
+  const socials = ["github", "linkedin", "instagram"]
     .filter((k) => data?.[k])
     .map((k) => ({ key: k, url: data[k], ...SOCIAL_META[k] }));
 

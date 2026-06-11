@@ -352,7 +352,7 @@ DEFAULT_CONTENT = {
         "email": "hello@alexrivera.dev",
         "github": "https://github.com/alexrivera",
         "linkedin": "https://linkedin.com/in/alexrivera",
-        "twitter": "https://twitter.com/alexrivera",
+        "instagram": "https://instagram.com/alexrivera",
     },
 }
 
@@ -531,7 +531,7 @@ async def admin_upload(file: UploadFile = File(...), _user: Dict = Depends(requi
         raise HTTPException(status_code=413, detail="File exceeds 5MB limit")
     ext = ALLOWED_MIME[file.content_type]
     file_id = str(uuid.uuid4())
-    path = f"{APP_NAME}/uploads/{file_id}.{ext}"
+    path = f"{APP_NAME}/assets/{file_id}.{ext}"
     try:
         result = storage_put(path, data, file.content_type)
     except requests.HTTPError as e:
