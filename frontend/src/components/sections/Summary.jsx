@@ -21,7 +21,7 @@ export default function Summary({ data }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="grid lg:grid-cols-12 gap-8 items-end"
+          className="grid lg:grid-cols-12 gap-8 items-start"
         >
           <div className="lg:col-span-8 space-y-6">
             {content.available && (
