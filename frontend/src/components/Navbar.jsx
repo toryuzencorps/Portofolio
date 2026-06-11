@@ -54,7 +54,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-3 inset-x-0 z-50 flex justify-center px-3" data-testid="navbar">
+    <header className="fixed top-3 inset-x-0 z-50 flex flex-col items-center px-3" data-testid="navbar">
       <div className="liquid-glass w-full max-w-6xl">
         <div className="px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
           <Link to="/" className="flex items-center gap-2 group shrink-0" data-testid="nav-logo">
@@ -144,24 +144,40 @@ export default function Navbar() {
             )}
           </div>
         </div>
-
-        {open && !isAdminPage && (
-          <div className="lg:hidden border-t border-white/10 px-3 pb-3 pt-2">
-            <div className="grid grid-cols-2 gap-1.5">
-              {links.map((l) => (
-                <button
-                  key={l.id}
-                  onClick={() => scrollTo(l.id)}
-                  data-testid={`nav-mobile-link-${l.id}`}
-                  className={`liquid-chip font-mono text-[10px] uppercase tracking-widest p-2.5 text-left ${active === l.id ? "text-primary border-primary/40" : ""}`}
-                >
-                  {l.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Mobile menu — separate floating panel (not inside the pill container) */}
+      {open && !isAdminPage && (
+        <div
+          className="lg:hidden w-full max-w-6xl mt-2 liquid-panel"
+          data-testid="nav-mobile-panel"
+        >
+          <div className="p-3 grid grid-cols-2 gap-2">
+            {links.map((l) => (
+              <button
+                key={l.id}
+                onClick={() => scrollTo(l.id)}
+                data-testid={`nav-mobile-link-${l.id}`}
+                className={`font-mono text-[11px] uppercase tracking-widest p-3 text-left rounded-lg border transition-colors ${
+                  active === l.id
+                    ? "border-primary/50 text-primary bg-primary/5"
+                    : "border-border text-muted-foreground hover:text-foreground hover:border-primary/30"
+                }`}
+              >
+                {l.label}
+              </button>
+            ))}
+            <Link
+              to="/admin/login"
+              onClick={() => setOpen(false)}
+              data-testid="nav-mobile-link-admin"
+              className={`col-span-2 font-mono text-[11px] uppercase tracking-widest p-3 text-center rounded-lg border border-primary/40 text-primary bg-primary/5 hover:bg-primary/10 transition-colors sm:hidden`}
+            >
+              {t.nav.admin}
+            </Link>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
