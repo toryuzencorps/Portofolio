@@ -1,130 +1,123 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/contexts/LanguageContext";
-import { Code2, Server, Database, Cloud, ChevronRight, Sparkles } from "lucide-react";
+import { Code2, Server, Database, Cloud, ChevronDown, Sparkles } from "lucide-react";
 
 const ICONS = { Code2, Server, Database, Cloud };
 
 function normalizeItems(items) {
   return (items || []).map((it) =>
-    typeof it === "string" ? { name: it, level: 80, years: 2, i18n: { en: "", id: "" } } : it
+    typeof it === "string" ? { name: it, years: 0, i18n: { en: "", id: "" } } : it
   );
 }
 
 export default function Skills({ data }) {
   const { lang, t } = useLang();
   const categories = (data && data.categories) || [];
-  const [activeIdx, setActiveIdx] = useState(0);
-
-  const active = useMemo(() => {
-    const c = categories[activeIdx];
-    if (!c) return null;
-    return { ...c, items: normalizeItems(c.items) };
-  }, [categories, activeIdx]);
+  const [openIdx, setOpenIdx] = useState(null);
 
   return (
     <section id="skills" className="relative py-24 px-6 lg:px-10" data-testid="section-skills">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="mb-10">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">{t.sections.skills.eyebrow}</p>
           <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tighter mt-2">{t.sections.skills.title}</h2>
+          <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mt-3">
+            // CLICK ANY CATEGORY TO EXPAND
+          </p>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-4">
-          {/* Categories rail */}
-          <aside className="lg:col-span-4 space-y-2">
-            {categories.map((cat, idx) => {
-              const Icon = ICONS[cat.icon] || Sparkles;
-              const isActive = idx === activeIdx;
-              return (
-                <motion.button
-                  key={cat.name}
-                  onClick={() => setActiveIdx(idx)}
-                  data-testid={`skill-category-${cat.name}`}
-                  data-active={isActive}
-                  whileHover={{ x: 4 }}
-                  className={`w-full text-left p-4 border rounded-md transition-all flex items-center gap-3 group ${
-                    isActive
-                      ? "border-primary/60 bg-primary/5 border-glow"
-                      : "border-border bg-card/40 hover:border-primary/30"
+        <div className="space-y-4">
+          {categories.map((cat, idx) => {
+            const Icon = ICONS[cat.icon] || Sparkles;
+            const items = normalizeItems(cat.items);
+            const isOpen = openIdx === idx;
+            const summary = cat.summary?.[lang] || cat.summary?.en || "";
+
+            return (
+              <motion.div
+                key={cat.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.08 }}
+                data-testid={`skill-category-${cat.name}`}
+              >
+                <button
+                  onClick={() => setOpenIdx(isOpen ? null : idx)}
+                  data-testid={`skill-toggle-${idx}`}
+                  aria-expanded={isOpen}
+                  className={`w-full text-left p-5 sm:p-6 border rounded-md bg-card/40 backdrop-blur-sm transition-all group ${
+                    isOpen
+                      ? "border-primary/60 border-glow"
+                      : "border-border hover:border-primary/40"
                   }`}
                 >
-                  <span className={`shrink-0 w-10 h-10 rounded-md flex items-center justify-center border ${isActive ? "border-primary/50 text-primary bg-primary/10" : "border-border text-muted-foreground"}`}>
-                    <Icon className="w-5 h-5" />
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-                      [{String(idx + 1).padStart(2, "0")}]
-                    </p>
-                    <p className={`font-heading text-base sm:text-lg font-bold tracking-tight truncate ${isActive ? "text-primary" : ""}`}>
-                      {cat.name}
-                    </p>
-                  </div>
-                  <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${isActive ? "text-primary translate-x-0" : "text-muted-foreground -translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0"}`} />
-                </motion.button>
-              );
-            })}
-          </aside>
-
-          {/* Detail panel */}
-          <div className="lg:col-span-8">
-            <AnimatePresence mode="wait">
-              {active && (
-                <motion.div
-                  key={active.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.35 }}
-                  className="p-6 sm:p-8 border border-border bg-card/40 backdrop-blur-sm rounded-md min-h-[400px]"
-                  data-testid={`skill-detail-${active.name}`}
-                >
-                  <div className="flex items-start justify-between gap-4 mb-4">
-                    <div>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-primary mb-1">// CATEGORY</p>
-                      <h3 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight">{active.name}</h3>
-                    </div>
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground border border-border px-2.5 py-1 rounded-sm shrink-0">
-                      {active.items.length} {active.items.length === 1 ? "item" : "items"}
+                  <div className="flex items-center gap-4">
+                    <span className={`shrink-0 w-11 h-11 rounded-md flex items-center justify-center border transition-colors ${isOpen ? "border-primary/50 text-primary bg-primary/10" : "border-border text-muted-foreground"}`}>
+                      <Icon className="w-5 h-5" />
                     </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-primary">
+                        [{String(idx + 1).padStart(2, "0")}] · {items.length} {items.length === 1 ? "item" : "items"}
+                      </p>
+                      <h3 className="font-heading text-xl sm:text-2xl font-bold tracking-tight mt-0.5">{cat.name}</h3>
+                    </div>
+                    <ChevronDown className={`w-5 h-5 shrink-0 transition-transform ${isOpen ? "rotate-180 text-primary" : "text-muted-foreground group-hover:text-foreground"}`} />
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                    {active.summary?.[lang] || active.summary?.en}
-                  </p>
 
-                  <div className="space-y-4">
-                    {active.items.map((it, i) => (
+                  {summary && (
+                    <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{summary}</p>
+                  )}
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
                       <motion.div
-                        key={it.name}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.05 }}
-                        className="border border-border bg-background/40 rounded-sm p-4 hover:border-primary/40 transition-colors"
-                        data-testid={`skill-item-${it.name}`}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.35, ease: "easeOut" }}
+                        className="overflow-hidden"
                       >
-                        <div className="flex items-baseline justify-between gap-3 mb-1.5">
-                          <div className="flex items-baseline gap-2 min-w-0">
-                            <span className="font-mono text-[10px] text-primary">{String(i + 1).padStart(2, "0")}</span>
-                            <span className="font-heading font-bold tracking-tight truncate">{it.name}</span>
+                        <div className="mt-5 pt-5 border-t border-border" data-testid={`skill-detail-${cat.name}`}>
+                          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3">// BREAKDOWN</p>
+                          <div className="grid sm:grid-cols-2 gap-3">
+                            {items.map((it, i) => (
+                              <motion.div
+                                key={it.name}
+                                initial={{ opacity: 0, x: -8 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.04 }}
+                                className="border border-border bg-background/40 rounded-sm p-3.5 hover:border-primary/40 transition-colors"
+                                data-testid={`skill-item-${it.name}`}
+                              >
+                                <div className="flex items-baseline justify-between gap-3 mb-1.5">
+                                  <div className="flex items-baseline gap-2 min-w-0">
+                                    <span className="font-mono text-[10px] text-primary">{String(i + 1).padStart(2, "0")}</span>
+                                    <span className="font-heading font-bold tracking-tight truncate">{it.name}</span>
+                                  </div>
+                                  {it.years ? (
+                                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground shrink-0">
+                                      {it.years} {it.years === 1 ? "yr" : "yrs"}
+                                    </span>
+                                  ) : null}
+                                </div>
+                                {(it.i18n?.[lang] || it.i18n?.en) && (
+                                  <p className="text-xs text-muted-foreground leading-relaxed">
+                                    {it.i18n[lang] || it.i18n.en}
+                                  </p>
+                                )}
+                              </motion.div>
+                            ))}
                           </div>
-                          {it.years ? (
-                            <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground shrink-0">
-                              {it.years} {it.years === 1 ? "yr" : "yrs"}
-                            </span>
-                          ) : null}
                         </div>
-                        {(it.i18n?.[lang] || it.i18n?.en) && (
-                          <p className="text-xs text-muted-foreground leading-relaxed">
-                            {it.i18n[lang] || it.i18n.en}
-                          </p>
-                        )}
                       </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+                    )}
+                  </AnimatePresence>
+                </button>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
