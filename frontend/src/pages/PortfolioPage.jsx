@@ -37,7 +37,11 @@ export default function PortfolioPage() {
         <Contact data={content.contact} />
         <footer className="border-t border-border py-10 px-6 lg:px-10 mt-12">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="font-mono text-xs text-muted-foreground">{t.footer}</p>
+            <p className="font-mono text-xs text-muted-foreground" data-testid="footer-credit">
+              Made By <span className="text-primary font-semibold">Ryuzen</span>
+              <span className="mx-2 text-muted-foreground/40">|</span>
+              <span className="uppercase tracking-widest">MY CV</span>
+            </p>
             <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">© {new Date().getFullYear()} · v1.0.0</p>
           </div>
         </footer>
